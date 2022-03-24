@@ -1,19 +1,46 @@
 import React from 'react';
 import styled from 'styled-components';
+import Button from "./common/Button";
 
 const Container = styled.div`
+    display: flex;
+    align-items: center;
     padding: 20px 50px;
-    color: white;
-    font-size: 1.4rem;
-    font-weight: bold;
-    background-color: #0f0e13;
-    background-image: radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%),
-    radial-gradient(at 50% 0%, hsl(225, 81%, 21%) 0, transparent 50%),
-    radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 1) 0, transparent 50%);
 `;
 
+const Logo = styled.div`
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-right: 2em;
+`;
+
+const NavbarItemText = styled.span`
+    display: inline-block;
+    margin-right: 1em;
+    cursor: pointer;
+    border-bottom: 1px solid transparent;
+    transition: border-bottom-color 200ms ease-in-out;
+    
+    &:hover {
+        border-bottom-color: #FFF;
+    }
+`;
+
+const NavbarItem = (props: {title: string}) => {
+    return <NavbarItemText>{props.title}</NavbarItemText>
+}
+
 const Navbar = () => {
-    return <Container>Coinslots</Container>;
+    const items = [
+        "Try your luck",
+        "Leaderboard",
+    ];
+
+    return <Container>
+        <Logo>Coinslots</Logo>
+        {items.map((item, i) => <NavbarItem key={i} title={item}/>)}
+        <Button type="primary" className="ml-auto white-glassmorphism">Login</Button>
+    </Container>;
 }
 
 export default Navbar;

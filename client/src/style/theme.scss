@@ -1,0 +1,36 @@
+$dark: (
+    50: #9697a9,
+    100: #797a8d,
+    200: #616278,
+    300: #353648,
+    400: #2F3142,
+    500: #2A2C3E,
+    600: #242636,
+    700: #242431,
+    800: #1E1E2C,
+    900: #15151f,
+);
+
+$blue: (
+    50 : #f0faff,
+    100 : #bde8ff,
+    200 : #70cdff,
+    300 : #24b3ff,
+    400 : #008cd6,
+    500 : #007bbd,
+    600 : #006aa3,
+    700 : #004970,
+    800 : #003957,
+    900 : #00283d,
+);
+$primary: $blue;
+
+@function shade($palette, $shade: 500) {
+    @return map-get($palette, $shade);
+}
+
+$radius: 6px;
+
+$background: shade($dark, 800);
+$header: shade($dark, 700);
+$text-color: white;
