@@ -5,7 +5,7 @@ import {MdWeb} from 'react-icons/md';
 import styled from 'styled-components';
 
 const Container = styled.div`
-    width: 200px;
+    min-width: 200px;
     margin-top: 50px;
     margin-left: 15vw;
     padding: 3px 12px;

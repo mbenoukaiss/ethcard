@@ -5,11 +5,11 @@ import Button from "./common/Button";
 const Container = styled.div`
     display: flex;
     align-items: center;
-    padding: 20px 50px;
+    padding: 40px 90px;
 `;
 
 const Logo = styled.div`
-    font-size: 1.4rem;
+    font-size: 1.6rem;
     font-weight: bold;
     margin-right: 2em;
 `;
@@ -18,6 +18,7 @@ const NavbarItemText = styled.span`
     display: inline-block;
     margin-right: 1em;
     cursor: pointer;
+    border-top: 1px solid transparent;
     border-bottom: 1px solid transparent;
     transition: border-bottom-color 200ms ease-in-out;
     
@@ -32,12 +33,11 @@ const NavbarItem = (props: {title: string}) => {
 
 const Navbar = () => {
     const items = [
-        "Try your luck",
-        "Leaderboard",
+        "Redeem your card",
     ];
 
     return <Container>
-        <Logo>Coinslots</Logo>
+        <Logo>Ethcard</Logo>
         {items.map((item, i) => <NavbarItem key={i} title={item}/>)}
         <Button type="primary" className="ml-auto white-glassmorphism">Login</Button>
     </Container>;

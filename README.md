@@ -1,1 +1,1 @@
-# Coinslot
+# Ethcard
