@@ -1,11 +1,12 @@
 import React from 'react';
+import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import styled from 'styled-components';
 import Navbar from './Navbar';
-import Presentation from "./home/Presentation";
-import Stack from "./home/Stack";
-import Flex from "./common/Flex";
-import Card from "./home/Card";
-import GiftCardForm from "./home/GiftCardForm";
+import Home from "../pages/Home";
+import Redeem from "../pages/Redeem";
+
+export const ROUTE_HOME = `/`;
+export const ROUTE_REDEEM = `/redeem`;
 
 const Background = styled.div`
     display: flex;
@@ -25,27 +26,19 @@ const Blur = styled.div`
     -webkit-backdrop-filter: blur(5px);
 `;
 
-const Container = styled.div`
-    margin: 50px 15vw;
-`;
-
 const App = () => {
     return (
-        <Background>
-            <Blur>
-                <Navbar/>
-                <Container>
-                    <Flex>
-                        <Presentation/>
-                        <Stack/>
-                    </Flex>
-                    <Flex row="space-between" className="mt-5">
-                        <GiftCardForm/>
-                        <Card/>
-                    </Flex>
-                </Container>
-            </Blur>
-        </Background>
+        <Router>
+            <Background>
+                <Blur>
+                    <Navbar/>
+                    <Routes>
+                        <Route path={ROUTE_REDEEM} element={<Redeem/>}/>
+                        <Route path={ROUTE_HOME} element={<Home/>}/>
+                    </Routes>
+                </Blur>
+            </Background>
+        </Router>
     );
 }
 

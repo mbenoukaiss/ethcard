@@ -13,3 +13,7 @@ npx hardhat node
 node scripts/deploy.js
 npx hardhat help
 ```
+
+```shell
+yarn hardhat run scripts/deploy.js --network ropsten
+```

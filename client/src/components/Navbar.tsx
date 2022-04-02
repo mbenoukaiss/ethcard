@@ -1,6 +1,9 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import styled from 'styled-components';
+import {Link} from 'react-router-dom';
 import Button from "./common/Button";
+import {CardContext} from "../context/CardContext";
+import {ROUTE_HOME, ROUTE_REDEEM} from "./App";
 
 const Container = styled.div`
     display: flex;
@@ -9,12 +12,13 @@ const Container = styled.div`
 `;
 
 const Logo = styled.div`
+    display: inline-block;
     font-size: 1.6rem;
     font-weight: bold;
     margin-right: 2em;
 `;
 
-const NavbarItemText = styled.span`
+const NavbarItem = styled.span`
     display: inline-block;
     margin-right: 1em;
     cursor: pointer;
@@ -27,19 +31,16 @@ const NavbarItemText = styled.span`
     }
 `;
 
-const NavbarItem = (props: {title: string}) => {
-    return <NavbarItemText>{props.title}</NavbarItemText>
-}
-
 const Navbar = () => {
-    const items = [
-        "Redeem your card",
-    ];
+    const {account, connectWallet} = useContext(CardContext);
 
-    return <Container>
-        <Logo>Ethcard</Logo>
-        {items.map((item, i) => <NavbarItem key={i} title={item}/>)}
-        <Button type="primary" className="ml-auto white-glassmorphism">Login</Button>
+    return <Container hidden>
+        <Link to={ROUTE_HOME}><Logo>Ethcard</Logo></Link>
+        <Link to={ROUTE_REDEEM}><NavbarItem>Redeem your card</NavbarItem></Link>
+
+        <Button type="primary" className="ml-auto white-glassmorphism" click={connectWallet} hidden={Boolean(account)}>
+            Connect wallet {account ? `(${account})` : ''}
+        </Button>
     </Container>;
 }
 

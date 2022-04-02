@@ -10,6 +10,7 @@ export type ButtonProps = {
   click?: (event: any) => void;
   className?: string;
   rf?: any;
+  hidden?: boolean;
   children?: any;
 };
 
@@ -21,6 +22,7 @@ Button.defaultProps = {
   click: null,
   className: null,
   rf: null,
+  hidden: false,
   children: null,
 };
 
@@ -31,11 +33,12 @@ export default function Button(props: ButtonProps): JSX.Element {
     props.icon && !props.children ? `icon-only` : null,
     props.className
   ].join(` `);
-
+console.log(props);
   return (
     <button ref={props.rf}
             className={`component-button ${props.type} ${classes}`}
             type={props.submit ? `submit` : `button`}
+            style={{display: props.hidden ? `none` : undefined}}
             onClick={props.click}>
       {props.icon ? <img src={props.icon} alt="Button icon"/> : <></>}
       {props.children}
