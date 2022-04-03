@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {FaEthereum} from 'react-icons/fa';
 import styled from 'styled-components';
 import {Card} from "../../contracts/Contracts";
@@ -18,6 +18,15 @@ const Container = styled.div`
     radial-gradient(at 90% 70%, rgba(174, 78, 222, 0.2) 0, transparent 90%),
     radial-gradient(at 0% 90%, rgba(81, 131, 180, 0.2) 0, transparent 30%);
     cursor: pointer;
+    transition: transform 200ms ease;
+    transform-style: preserve-3d;
+    will-change: transform;
+`;
+
+const Content = styled.div`
+    position: relative;
+    z-index: 1;
+    transition: transform 3s ease;
 `;
 
 const Title = styled.h1`
@@ -65,12 +74,34 @@ const CreditCard = (props: CreditCardProps) => {
         message: props.subtitle as string,
     };
 
-    return <Container onClick={props.onClick}>
-        <div>
-            <Title><FaEthereum/> Gift card</Title>
-            <Subtitle hidden={!card.message}>{card.message}</Subtitle>
-        </div>
-        <Amount>{card.amount ?? 0} Eth</Amount>
+    const [transform, setTransform] = React.useState(``);
+
+    const THRESHOLD = 25;
+    const handleHover = useCallback(function(this: any, e) {
+        const { clientX, clientY, currentTarget } = e;
+        const { clientWidth, clientHeight, offsetLeft, offsetTop } = currentTarget;
+
+        const horizontal = (clientX - (offsetLeft - window.scrollX)) / clientWidth;
+        const vertical = (clientY - (offsetTop - window.scrollY)) / clientHeight;
+        const rotateX = (THRESHOLD / 2 - horizontal * THRESHOLD).toFixed(2);
+        const rotateY = (vertical * THRESHOLD - THRESHOLD / 2).toFixed(2);
+        console.log(clientY, offsetTop, clientHeight, rotateY, vertical)
+
+        setTransform(`perspective(${clientWidth}px) rotateX(${rotateY}deg) rotateY(${rotateX}deg) scale3d(1, 1, 1)`);
+    }, []);
+
+    const resetStyles = useCallback(function(this: any, e) {
+        setTransform(`perspective(${e.currentTarget.clientWidth}px) rotateX(0deg) rotateY(0deg)`);
+    }, []);
+
+    return <Container style={{transform}} onMouseMove={handleHover} onMouseLeave={resetStyles} onClick={props.onClick}>
+        <Content>
+            <div>
+                <Title><FaEthereum/> Gift card</Title>
+                <Subtitle hidden={!card.message}>{card.message}</Subtitle>
+            </div>
+            <Amount>{card.amount ?? 0} Eth</Amount>
+        </Content>
     </Container>
 }
 

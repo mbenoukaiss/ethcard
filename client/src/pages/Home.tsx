@@ -7,6 +7,7 @@ import GiftCardForm from "../components/home/GiftCardForm";
 import CreditCard from "../components/home/CreditCard";
 import GiftIllustration from "../assets/gift.svg";
 import {Card} from "../contracts/Contracts";
+import {BsArrowRightCircleFill} from "react-icons/bs";
 
 export const Container = styled.div`
     margin: 50px 15vw;
@@ -35,6 +36,7 @@ export default function Home() {
         <h1 className="mb-1 mt-6">Create a card</h1>
         <Flex row="space-between">
             <GiftCardForm liveUpdate={setCard}/>
+            <BsArrowRightCircleFill size={50}/>
             <div>
                 <CreditCard card={card}/>
                 <Hint>
