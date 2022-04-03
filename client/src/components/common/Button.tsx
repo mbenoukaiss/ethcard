@@ -33,7 +33,7 @@ export default function Button(props: ButtonProps): JSX.Element {
     props.icon && !props.children ? `icon-only` : null,
     props.className
   ].join(` `);
-console.log(props);
+
   return (
     <button ref={props.rf}
             className={`component-button ${props.type} ${classes}`}

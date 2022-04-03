@@ -4,18 +4,27 @@ import {UUID} from 'uuid-generator-ts';
 
 import {CONTRACT_ABI, CONTRACT_ADDRESS} from "../contracts/Contracts";
 
+export type Card = {
+    number: string;
+    beneficiary: string;
+    amount: number;
+    message: string;
+}
+
 export type CardContextProps = {
     account?: string | null;
     connectWallet: () => void;
-    createCard: (data: { beneficiary: string, amount: number, message: string }) => Promise<string|null>;
+    createCard: (data: Card) => Promise<string | null>;
+    getAvailableCards: () => Promise<Array<Card>>;
+    redeemCard: (cardNumber: string) => Promise<void>;
 }
 
 export const CardContext = React.createContext<CardContextProps>({
     account: undefined,
-    connectWallet: () => {},
-    createCard: () => {
-        return Promise.resolve(null);
-    },
+    connectWallet: () => null,
+    createCard: () => Promise.resolve(null),
+    getAvailableCards: () => Promise.resolve([]),
+    redeemCard: () => Promise.resolve(),
 });
 
 const {ethereum} = window as any;
@@ -30,8 +39,8 @@ export class CardProvider extends React.Component<CardProviderProps> {
         account: undefined,
     };
 
-    private static checkEthereum(): boolean {
-        return Boolean(ethereum);
+    private checkEthereum(requiredLogin: boolean = false): boolean {
+        return requiredLogin ? ethereum && this.state.account : Boolean(ethereum);
     }
 
     private static getContract() {
@@ -41,12 +50,25 @@ export class CardProvider extends React.Component<CardProviderProps> {
         return new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
     }
 
+    private static toBytes(input: string): Array<number> {
+        if(!input) {
+            return [];
+        }
+
+        const bytes = [];
+        for (let i = 0; i < input.length; i++) {
+            bytes.push(input.charCodeAt(i));
+        }
+
+        return bytes;
+    }
+
     public async componentDidMount() {
         await this.initializeWallet();
     }
 
     private async initializeWallet(registerEvents: boolean = true) {
-        if (CardProvider.checkEthereum()) {
+        if (this.checkEthereum()) {
             const accounts = await ethereum.request({method: `eth_accounts`});
             if (accounts.length) {
                 console.log(`Connected account`);
@@ -69,22 +91,24 @@ export class CardProvider extends React.Component<CardProviderProps> {
     }
 
     private async connectWallet() {
-        if (CardProvider.checkEthereum()) {
+        if (this.checkEthereum()) {
             await ethereum.request({method: `eth_requestAccounts`});
         }
     }
 
     private async createCard(data: { beneficiary: string, amount: number, message: string }): Promise<string | null> {
-        if (CardProvider.checkEthereum()) {
+        if (this.checkEthereum()) {
             const contract = CardProvider.getContract();
             const uuid = UUID.getDashFreeUUID(new UUID());
 
             try {
-                const tx = await contract.createCard(uuid, data.beneficiary, data.message, {
+                const tx = await contract.createCard(CardProvider.toBytes(uuid), data.beneficiary, data.message ?? ``, {
                     from: this.state.account,
-                    value: ethers.utils.parseEther(data.amount.toString())
+                    value: ethers.utils.parseEther(data.amount.toString()),
+                    gasLimit: ethers.utils.hexlify(500000),
                 });
-                tx.wait();
+
+                console.log(tx);
             } catch (e) {
                 console.error(e);
             }
@@ -95,11 +119,50 @@ export class CardProvider extends React.Component<CardProviderProps> {
         return null;
     }
 
+    private async getAvailableCards(): Promise<Array<Card>> {
+        if (this.checkEthereum(true)) {
+            const contract = CardProvider.getContract();
+
+            const output = [];
+            const availableCards = await contract.getAvailableCards(this.state.account);
+
+            for(const cardNumber of availableCards) {
+                const card = await contract.cards(cardNumber);
+                output.push({
+                    number: card.number,
+                    beneficiary: card.beneficiary,
+                    amount: Number(ethers.utils.formatEther(card.amount)),
+                    message: card.message,
+                });
+            }
+
+            return output;
+        }
+
+        return [];
+    }
+
+    private async redeemCard(cardNumber: string) {
+        if (this.checkEthereum(true)) {
+            const contract = CardProvider.getContract();
+
+            const tx = await contract.redeemCard(cardNumber, {
+                from: this.state.account,
+                gasLimit: ethers.utils.hexlify(750000),
+            });
+
+            tx.wait();
+            console.log(tx);
+        }
+    }
+
     render() {
         const value = {
             account: this.state.account,
-            connectWallet: this.connectWallet,
-            createCard: this.createCard,
+            connectWallet: this.connectWallet.bind(this),
+            createCard: this.createCard.bind(this),
+            getAvailableCards: this.getAvailableCards.bind(this),
+            redeemCard: this.redeemCard.bind(this),
         };
 
         return <CardContext.Provider value={value}>

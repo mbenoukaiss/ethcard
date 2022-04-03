@@ -12,7 +12,7 @@ const Background = styled.div`
     display: flex;
     flex: 1 1 auto;
     background-color: #16151c;
-    background-image: radial-gradient(at 0% 0%, hsl(153, 100%, 20%) 0, transparent 20%),
+    background-image: radial-gradient(at 0% 0%, hsl(200, 75%, 3%) 0, transparent 20%),
     radial-gradient(at 10% 30%, #00266c 0, transparent 70%),
     radial-gradient(at 60% 80%, #004462 0, transparent 60%),
     radial-gradient(at 90% 10%, #480057 0, transparent 30%),

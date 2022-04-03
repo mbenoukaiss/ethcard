@@ -6,22 +6,15 @@ import styled from 'styled-components';
 
 const Container = styled.div`
     min-width: 200px;
-    margin-top: 50px;
-    margin-left: 15vw;
-    padding: 3px 12px;
+    margin-left: 5px;
+    padding: 3px 16px;
     border-left: 3px solid rgba(255, 255, 255, 0.25);
-`;
-
-const Title = styled.h1`
-    font-weight: bold;
-    font-size: 1.2rem;
-    margin-bottom: 8px;
 `;
 
 const Item = styled.span`
     display: flex;
     align-items: center;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
 
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(5px);
@@ -32,19 +25,21 @@ const Item = styled.span`
     border-radius: 2px;
 
     & :first-child {
-        margin-right: 5px;
+        margin-right: 10px;
     }
 `;
 
 const Stack = () => {
-    return <Container>
-        <Title>Technical stack</Title>
-        <Item><FaEthereum/> Ethereum</Item>
-        <Item><FaFileContract/> Smart contracts</Item>
-        <Item><FaReact/> React</Item>
-        <Item><MdWeb/> Web 3.0</Item>
-        <Item><SiSolidity/> Solidity</Item>
-    </Container>
+    return <div>
+        <h1 className="mb-1">Technical stack</h1>
+        <Container>
+            <Item><FaEthereum/> Ethereum</Item>
+            <Item><FaFileContract/> Smart contracts</Item>
+            <Item><FaReact/> React</Item>
+            <Item><MdWeb/> Web 3.0</Item>
+            <Item><SiSolidity/> Solidity</Item>
+        </Container>
+    </div>
 }
 
 export default Stack;

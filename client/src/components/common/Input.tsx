@@ -28,7 +28,7 @@ const StyledInput = styled.input`
     width: 100%;
     outline: none;
 
-    &::placeholder { 
+    &::placeholder {
         color: #BBB;
         font-style: italic;
     }
@@ -45,7 +45,7 @@ const StyledTextarea = styled.textarea`
     outline: none;
     resize: none;
 
-    &::placeholder { 
+    &::placeholder {
         color: #BBB;
         font-style: italic;
     }
@@ -64,6 +64,13 @@ export type InputProps = {
     placeholder?: string;
     required?: boolean;
     value?: any;
+    min?: number;
+    max?: number;
+    step?: number;
+    maxlength?: number;
+    rows?: number;
+
+    onInput?: (e: React.ChangeEvent<HTMLInputElement>) => void;
     formChange?: (name: string, value: any) => void;
 };
 
@@ -82,6 +89,12 @@ export default class Input extends React.Component<InputProps> {
         placeholder: undefined,
         required: false,
         value: undefined,
+        min: undefined,
+        max: undefined,
+        step: undefined,
+        rows: undefined,
+
+        onInput: undefined,
         formChange: undefined,
     };
 
@@ -129,9 +142,10 @@ export default class Input extends React.Component<InputProps> {
         if (this.props.textarea) {
             input = (
                 <StyledTextarea name={this.props.name}
-                          placeholder={this.props.placeholder}
-                          onChange={event => this.setValue(event.target.value)}>
-                  {this.state.value}
+                                placeholder={this.props.placeholder}
+                                rows={this.props.rows}
+                                onChange={event => this.setValue(event.target.value)}>
+                    {this.state.value}
                 </StyledTextarea>
             );
         } else {
@@ -139,6 +153,11 @@ export default class Input extends React.Component<InputProps> {
                                  name={this.props.name}
                                  placeholder={this.props.placeholder}
                                  value={this.state.value || ``}
+                                 min={this.props.min}
+                                 max={this.props.max}
+                                 step={this.props.step}
+                                 maxLength={this.props.maxlength}
+                                 onInput={this.props.onInput}
                                  onChange={event => this.setValue(event.target.value)}
                                  required/>;
         }
