@@ -3,10 +3,10 @@ import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import styled from 'styled-components';
 import Navbar from './Navbar';
 import Home from "../pages/Home";
-import Redeem from "../pages/Redeem";
+import Account from "../pages/Account";
 
 export const ROUTE_HOME = `/`;
-export const ROUTE_REDEEM = `/redeem`;
+export const ROUTE_ACCOUNT = `/account`;
 
 const Background = styled.div`
     display: flex;
@@ -33,7 +33,7 @@ const App = () => {
                 <Blur>
                     <Navbar/>
                     <Routes>
-                        <Route path={ROUTE_REDEEM} element={<Redeem/>}/>
+                        <Route path={ROUTE_ACCOUNT} element={<Account/>}/>
                         <Route path={ROUTE_HOME} element={<Home/>}/>
                     </Routes>
                 </Blur>

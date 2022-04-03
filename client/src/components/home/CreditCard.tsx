@@ -1,7 +1,7 @@
 import React from 'react';
 import {FaEthereum} from 'react-icons/fa';
 import styled from 'styled-components';
-import {Card} from "../../context/CardContext";
+import {Card} from "../../contracts/Contracts";
 
 const Container = styled.div`
     display: flex;
@@ -70,7 +70,7 @@ const CreditCard = (props: CreditCardProps) => {
             <Title><FaEthereum/> Gift card</Title>
             <Subtitle hidden={!card.message}>{card.message}</Subtitle>
         </div>
-        <Amount>{card.amount} Eth</Amount>
+        <Amount>{card.amount ?? 0} Eth</Amount>
     </Container>
 }
 

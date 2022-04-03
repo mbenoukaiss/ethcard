@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import {Link} from 'react-router-dom';
 import Button from "./common/Button";
 import {CardContext} from "../context/CardContext";
-import {ROUTE_HOME, ROUTE_REDEEM} from "./App";
+import {ROUTE_HOME, ROUTE_ACCOUNT} from "./App";
 
 const Container = styled.div`
     display: flex;
@@ -32,14 +32,14 @@ const NavbarItem = styled.span`
 `;
 
 const Navbar = () => {
-    const {account, connectWallet} = useContext(CardContext);
+    const {account, promptConnexion} = useContext(CardContext);
 
     return <Container hidden>
         <Link to={ROUTE_HOME}><Logo>Ethcard</Logo></Link>
-        <Link to={ROUTE_REDEEM}><NavbarItem>Redeem your card</NavbarItem></Link>
+        <Link to={ROUTE_ACCOUNT}><NavbarItem>Account</NavbarItem></Link>
 
-        <Button type="primary" className="ml-auto white-glassmorphism" click={connectWallet} hidden={Boolean(account)}>
-            Connect wallet {account ? `(${account})` : ''}
+        <Button type="primary" className="ml-auto white-glassmorphism" click={promptConnexion}>
+            {account ? `Connected (${account})` : `Connect Wallet`}
         </Button>
     </Container>;
 }

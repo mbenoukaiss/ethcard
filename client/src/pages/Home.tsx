@@ -6,7 +6,7 @@ import Stack from "../components/home/Stack";
 import GiftCardForm from "../components/home/GiftCardForm";
 import CreditCard from "../components/home/CreditCard";
 import GiftIllustration from "../assets/gift.svg";
-import {Card} from "../context/CardContext";
+import {Card} from "../contracts/Contracts";
 
 export const Container = styled.div`
     margin: 50px 15vw;
@@ -39,7 +39,7 @@ export default function Home() {
                 <CreditCard card={card}/>
                 <Hint>
                     The beneficiary will be able to redeem their card at any time by connecting
-                    to their wallet and going to the <u>Redeem your card</u> tab.
+                    to their wallet and going to the <u>Account</u> tab.
                 </Hint>
             </div>
         </Flex>
