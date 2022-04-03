@@ -1,12 +1,9 @@
 import React, {useCallback} from 'react';
 import {FaEthereum} from 'react-icons/fa';
 import styled from 'styled-components';
-import {Card} from "../../contracts/Contracts";
+import {Card} from "../contracts/Contracts";
 
 const Container = styled.div`
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
     width: 300px;
     height: 170px;
     border-radius: 8px;
@@ -26,6 +23,10 @@ const Container = styled.div`
 const Content = styled.div`
     position: relative;
     z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
     transition: transform 3s ease;
 `;
 

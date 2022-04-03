@@ -4,7 +4,7 @@ import Flex from "../components/common/Flex";
 import Presentation from "../components/home/Presentation";
 import Stack from "../components/home/Stack";
 import GiftCardForm from "../components/home/GiftCardForm";
-import CreditCard from "../components/home/CreditCard";
+import CreditCard from "../components/CreditCard";
 import GiftIllustration from "../assets/gift.svg";
 import {Card} from "../contracts/Contracts";
 import {BsArrowRightCircleFill} from "react-icons/bs";
