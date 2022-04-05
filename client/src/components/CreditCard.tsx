@@ -1,7 +1,7 @@
 import React, {useCallback} from 'react';
 import {FaEthereum} from 'react-icons/fa';
 import styled from 'styled-components';
-import {Card} from "../contracts/Contracts";
+import {Card} from "../contracts/CardContext";
 
 const Container = styled.div`
     width: 300px;
@@ -66,6 +66,7 @@ export type CreditCardProps = {
     card?: Card;
     subtitle?: string;
     amount?: string | number;
+    className?: string;
     onClick?: () => void;
 };
 
@@ -86,7 +87,6 @@ const CreditCard = (props: CreditCardProps) => {
         const vertical = (clientY - (offsetTop - window.scrollY)) / clientHeight;
         const rotateX = (THRESHOLD / 2 - horizontal * THRESHOLD).toFixed(2);
         const rotateY = (vertical * THRESHOLD - THRESHOLD / 2).toFixed(2);
-        console.log(clientY, offsetTop, clientHeight, rotateY, vertical)
 
         setTransform(`perspective(${clientWidth}px) rotateX(${rotateY}deg) rotateY(${rotateX}deg) scale3d(1, 1, 1)`);
     }, []);
@@ -95,7 +95,7 @@ const CreditCard = (props: CreditCardProps) => {
         setTransform(`perspective(${e.currentTarget.clientWidth}px) rotateX(0deg) rotateY(0deg)`);
     }, []);
 
-    return <Container style={{transform}} onMouseMove={handleHover} onMouseLeave={resetStyles} onClick={props.onClick}>
+    return <Container style={{transform}} className={props.className} onMouseMove={handleHover} onMouseLeave={resetStyles} onClick={props.onClick}>
         <Content>
             <div>
                 <Title><FaEthereum/> Gift card</Title>

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import './style/index.scss';
 import App from './components/App';
 import reportWebVitals from './reportWebVitals';
-import {CardProvider} from "./context/CardContext";
+import {CardProvider} from "./providers/CardProvider";
 
 ReactDOM.render(
     <React.StrictMode>

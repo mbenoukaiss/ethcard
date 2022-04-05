@@ -2,8 +2,8 @@ import React, {useContext} from 'react';
 import Button from '../common/Button';
 import Input from '../common/Input';
 import Form, {useForm} from '../common//Form';
-import {CardContext} from "../../context/CardContext";
-import {Card} from "../../contracts/Contracts";
+import {CardContext} from "../../contracts/CardContext";
+import {Card} from "../../contracts/CardContext";
 
 export default function GiftCardForm(props: {liveUpdate: (card: Card) => void}) {
     const {createCard} = useContext(CardContext);

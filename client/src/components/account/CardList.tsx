@@ -2,7 +2,7 @@ import React from "react";
 import styled from 'styled-components';
 import Flex from "../common/Flex";
 import CreditCard from "../CreditCard";
-import {Card} from "../../contracts/Contracts";
+import {Card} from "../../contracts/CardContext";
 
 const Title = styled.h1`
     font-size: 2rem;
@@ -25,7 +25,7 @@ export default function CardList(props: CardListProps) {
         <Title>{props.title}</Title>
         <Explanation>{props.explanation}</Explanation>
         <Flex row="flex-start">
-            {props.cards.map(card => <CreditCard key={card.number} card={card} onClick={() => props.onClick(card)}/>)}
+            {props.cards.map(card => <CreditCard key={card.number} card={card} className="mr-1" onClick={() => props.onClick(card)}/>)}
         </Flex>
     </div>
 }

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import {Link} from 'react-router-dom';
 import {BsCreditCard2FrontFill} from 'react-icons/bs';
 import Button from "./common/Button";
-import {CardContext} from "../context/CardContext";
+import {CardContext} from "../contracts/CardContext";
 import {ROUTE_HOME, ROUTE_ACCOUNT} from "./App";
 
 const Container = styled.div`
@@ -45,7 +45,7 @@ const Navbar = () => {
 
     return <Container hidden>
         <Link to={ROUTE_HOME} style={{textDecoration: `none`}}><Logo><BsCreditCard2FrontFill size={30}/> Ethcard</Logo></Link>
-        <Link to={ROUTE_ACCOUNT}><NavbarItem>Account</NavbarItem></Link>
+        <Link to={ROUTE_ACCOUNT} hidden={account === undefined}><NavbarItem>Account</NavbarItem></Link>
 
         <Button type="primary" className="ml-auto white-glassmorphism" click={promptConnexion}>
             {account ? `Connected (${account})` : `Connect Wallet`}
