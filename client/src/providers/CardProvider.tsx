@@ -7,13 +7,33 @@ import {Contract} from "ethers";
 
 const {ethereum} = window as any;
 
+export const ERROR_MESSAGES: {[code: number]: string} = {
+    [-32700]: `Invalid JSON was received by the server`,
+    [-32600]: `The JSON sent is not a valid Request object`,
+    [-32601]: `The method does not exist / is not available`,
+    [-32602]: `Invalid method parameter(s)`,
+    [-32603]: `Internal JSON-RPC error`,
+    [-32000]: `Invalid input`,
+    [-32001]: `Resource not found`,
+    [-32002]: `Resource unvailable`,
+    [-32003]: `Transaction rejected`,
+    [-32004]: `Method not supported`,
+    [-32005]: `Request limit exceeded`,
+    [+4001]: `Transaction request rejected`,
+    [+4100]: `The requested account and/or method has not been authorized`,
+    [+4200]: `The requested method is not supported by this Ethereum provider`,
+    [+4900]: `The provider is disconnected from all chains`,
+    [+4901]: `The provider is disconnected from the specified chain`,
+};
+
 type CardProviderState = {
     loading: boolean;
     provider: any;
     contract: Contract;
     account?: string;
-    listeners: {[event: string]: Array<(...args: any[]) => void>};
+    listeners: { [event: string]: Array<(...args: any[]) => void> };
 }
+
 export class CardProvider extends React.Component<{}, CardProviderState> {
 
     public state: CardProviderState;
@@ -96,7 +116,7 @@ export class CardProvider extends React.Component<{}, CardProviderState> {
         return 0;
     }
 
-    private async getCard(number: string): Promise<Card|undefined> {
+    private async getCard(number: string): Promise<Card | undefined> {
         if (this.checkEthereum(true)) {
             const contract = this.getContract();
             const card = await contract.getCard(number);
@@ -122,7 +142,7 @@ export class CardProvider extends React.Component<{}, CardProviderState> {
 
             for (const cardNumber of availableCards) {
                 const card = await this.getCard(cardNumber);
-                if(card) {
+                if (card) {
                     output.push(card);
                 }
             }
@@ -146,18 +166,14 @@ export class CardProvider extends React.Component<{}, CardProviderState> {
             const contract = this.getContract();
             const uuid = UUID.getDashFreeUUID(new UUID());
 
-            try {
-                const tx = await contract.createCard(CardProvider.toBytes(uuid), data.beneficiary, data.message ?? ``, {
-                    from: this.state.account,
-                    value: ethers.utils.parseEther(data.amount.toString()),
-                    gasLimit: ethers.utils.hexlify(500000),
-                });
+            const tx = await contract.createCard(CardProvider.toBytes(uuid), data.beneficiary, data.message ?? ``, {
+                from: this.state.account,
+                value: ethers.utils.parseEther(data.amount.toString()),
+                gasLimit: ethers.utils.hexlify(500000),
+            });
 
-                tx.wait();
-                console.log(tx);
-            } catch (e) {
-                console.error(e);
-            }
+            tx.wait();
+            console.log(tx);
 
             return uuid;
         }
@@ -193,13 +209,13 @@ export class CardProvider extends React.Component<{}, CardProviderState> {
         }
     }
 
-    private addListener(events: string|Array<string>, callback: (...args: any[]) => void) {
+    private addListener(events: string | Array<string>, callback: (...args: any[]) => void) {
         if (this.checkEthereum()) {
-            if(!Array.isArray(events)) {
+            if (!Array.isArray(events)) {
                 events = [events];
             }
 
-            for(const event of events) {
+            for (const event of events) {
                 //register the listener on the contract if it's the first listener we add
                 if (!this.state.listeners[event]) {
                     const [provider, contract] = this.getContract<[any, Contract]>(true);
@@ -224,13 +240,13 @@ export class CardProvider extends React.Component<{}, CardProviderState> {
         }
     }
 
-    private removeListener(events: string|Array<string>, callback: (...args: any[]) => void) {
+    private removeListener(events: string | Array<string>, callback: (...args: any[]) => void) {
         if (this.checkEthereum()) {
-            if(!Array.isArray(events)) {
+            if (!Array.isArray(events)) {
                 events = [events];
             }
 
-            for(const event of events) {
+            for (const event of events) {
                 const listeners = [...(this.state.listeners[event] ?? [])];
                 listeners.splice(listeners.indexOf(callback), 1);
 

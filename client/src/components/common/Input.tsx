@@ -1,6 +1,7 @@
 import React from 'react';
 import {FormController} from './Form';
 import styled from 'styled-components';
+import {AiFillWarning} from 'react-icons/ai';
 
 const StyledLabel = styled.div`
     border-radius: 4px;
@@ -10,8 +11,13 @@ const StyledLabel = styled.div`
     margin-bottom: 7px;
     padding: 0 1.5rem;
     min-width: 400px;
+    font-weight: bold;
 
-    span {
+    &[data-error] {
+        background-color: rgba(255, 78, 78, 0.3);
+    }
+
+    span:first-child {
         display: inline-block;
         font-size: 1.0rem;
         margin-right: 1rem;
@@ -29,7 +35,7 @@ const StyledInput = styled.input`
     outline: none;
 
     &::placeholder {
-        color: #BBB;
+        color: #DDD;
         font-style: italic;
     }
 `;
@@ -46,8 +52,20 @@ const StyledTextarea = styled.textarea`
     resize: none;
 
     &::placeholder {
-        color: #BBB;
+        color: #DDD;
         font-style: italic;
+    }
+`;
+
+const Error = styled.span`
+    display: inline-flex;
+    align-items: center;
+    color: #dc3333;
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+    
+    & :first-child {
+        margin-right: 0.3rem;
     }
 `;
 
@@ -138,13 +156,16 @@ export default class Input extends React.Component<InputProps> {
     }
 
     render() {
+        const errors = this.props.in ? this.props.in.errors[this.props.name as string] : undefined;
+
         let input;
         if (this.props.textarea) {
             input = (
                 <StyledTextarea name={this.props.name}
                                 placeholder={this.props.placeholder}
                                 rows={this.props.rows}
-                                onChange={event => this.setValue(event.target.value)}>
+                                onChange={event => this.setValue(event.target.value)}
+                                required={this.props.required}>
                     {this.state.value}
                 </StyledTextarea>
             );
@@ -159,13 +180,14 @@ export default class Input extends React.Component<InputProps> {
                                  maxLength={this.props.maxlength}
                                  onInput={this.props.onInput}
                                  onChange={event => this.setValue(event.target.value)}
-                                 required/>;
+                                 required={this.props.required}/>;
         }
 
         return (
-            <StyledLabel>
+            <StyledLabel data-error={errors ? `has-error` : undefined}>
                 <span>{this.props.label}</span>
                 {input}
+                {errors && errors.map((error, index) => <Error key={index}><AiFillWarning style={{fill: `#dc3333`}}/> {error}</Error>)}
             </StyledLabel>
         );
     }
