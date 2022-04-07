@@ -109,8 +109,9 @@ export class CardProvider extends React.Component<{}, CardProviderState> {
     }
 
     private async getCardsCount(): Promise<number> {
-        if (this.checkEthereum()) {
-            return await this.getContract().getCardsCount();
+        if (this.checkEthereum(true)) {
+            const count = await this.getContract().getCardsCount();
+            return count.toNumber();
         }
 
         return 0;
