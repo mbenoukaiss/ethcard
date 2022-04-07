@@ -10,6 +10,9 @@
     border-radius: $radius;
     border: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    text-align: center;
 
     &.icon-only {
         padding: 8px 12px;
@@ -58,6 +61,26 @@
         &:hover {
             background: lighten(shade($dark), 5%);
             color: lighten(shade($dark, 50), 5%);
+        }
+    }
+
+    &.danger {
+        background: rgba(255, 71, 71, 0.8);
+        border: 1px solid rgba(162, 61, 61, 0.8);
+        color: white;
+
+        &:hover {
+            background: rgba(255, 53, 53, 0.8);
+        }
+    }
+
+    &.success {
+        background: rgba(97, 255, 110, 0.8);
+        border: 1px solid rgba(57, 145, 65, 0.8);
+        color: white;
+
+        &:hover {
+            background: rgba(58, 255, 71, 0.8);
         }
     }
 

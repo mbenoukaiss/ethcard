@@ -2,12 +2,14 @@ import '../../style/components/Button.scss';
 
 import React from 'react';
 
+export type ButtonType = `primary` | `secondary` | `success` | `danger` | `silent` | `link` | `dropdown` | undefined;
+
 export type ButtonProps = {
-  type: `primary` | `secondary` | `silent` | `link` | `dropdown` | undefined;
+  type: ButtonType;
   big?: boolean;
   icon?: string;
   submit?: boolean;
-  click?: (event: any) => void;
+  onClick?: (event: any) => void;
   className?: string;
   rf?: any;
   hidden?: boolean;
@@ -39,7 +41,7 @@ export default function Button(props: ButtonProps): JSX.Element {
             className={`component-button ${props.type} ${classes}`}
             type={props.submit ? `submit` : `button`}
             style={{display: props.hidden ? `none` : undefined}}
-            onClick={props.click}>
+            onClick={props.onClick}>
       {props.icon ? <img src={props.icon} alt="Button icon"/> : <></>}
       {props.children}
     </button>

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Flex from "../common/Flex";
 import CreditCard from "../CreditCard";
 import {Card} from "../../contracts/CardContext";
+import Button, {ButtonType} from "../common/Button";
 
 const Title = styled.h1`
     font-size: 2rem;
@@ -17,6 +18,8 @@ export type CardListProps = {
     cards: Array<Card>;
     title: string;
     explanation: string;
+    action: string;
+    button: ButtonType;
     onClick: (card: Card) => void;
 };
 
@@ -25,7 +28,9 @@ export default function CardList(props: CardListProps) {
         <Title>{props.title}</Title>
         <Explanation>{props.explanation}</Explanation>
         <Flex row="flex-start">
-            {props.cards.map(card => <CreditCard key={card.number} card={card} className="mr-1" onClick={() => props.onClick(card)}/>)}
+            {props.cards.map(card => <CreditCard key={card.number} card={card} animation={false} className="mr-1">
+                <Button type={props.button} onClick={() => props.onClick(card)}>{props.action}</Button>
+            </CreditCard>)}
         </Flex>
     </div>
 }

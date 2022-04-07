@@ -47,7 +47,7 @@ const Navbar = () => {
         <Link to={ROUTE_HOME} style={{textDecoration: `none`}}><Logo><BsCreditCard2FrontFill size={30}/> Ethcard</Logo></Link>
         <Link to={ROUTE_ACCOUNT} hidden={account === undefined}><NavbarItem>Account</NavbarItem></Link>
 
-        <Button type="primary" className="ml-auto white-glassmorphism" click={promptConnexion}>
+        <Button type="primary" className="ml-auto white-glassmorphism" onClick={promptConnexion}>
             {account ? `Connected (${account})` : `Connect Wallet`}
         </Button>
     </Container>;

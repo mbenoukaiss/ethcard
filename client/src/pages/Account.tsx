@@ -105,12 +105,16 @@ export default class Account extends React.Component<{}, AccountState> {
                 <CardList cards={available}
                           title={`${available.length || `No`} card${available.length !== 1 ? `s` : ``} waiting to be redeemed`}
                           explanation="You will find the cards that have been gifted to you below. Click on the card to redeem the amount."
+                          action="Redeem card"
+                          button="success"
                           onClick={card => this.context.redeemCard(card.number)}/>
 
                 <CardList cards={emitted}
                           title={`${emitted.length || `No`} card${emitted.length !== 1 ? `s` : ``} created by you`}
                           explanation="You will find the cards that you have created below and that have not been redeemed yet below.
                         Click on the card to cancel the emission."
+                          action="Cancel card"
+                          button="danger"
                           onClick={card => this.context.cancelCard(card.number)}/>
             </Container>
         </>;
