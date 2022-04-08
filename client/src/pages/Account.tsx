@@ -1,9 +1,19 @@
 import React from "react";
 import {CardContext, CardEvent} from "../contracts/CardContext";
+import styled from "styled-components";
 
 import {Container} from "./Home";
 import {Card} from "../contracts/CardContext";
 import CardList from "../components/account/CardList";
+import {withAlert, InjectedAlertProps} from "react-alert";
+
+const Address = styled.span`
+    display: inline-block;
+    max-width: 10em;
+    vertical-align: bottom;
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+`;
 
 type AccountState = {
     loaded: boolean;
@@ -14,14 +24,14 @@ type AccountState = {
     updateCard: (number: string) => void;
 };
 
-export default class Account extends React.Component<{}, AccountState> {
+class Account extends React.Component<InjectedAlertProps, AccountState> {
 
     static contextType = CardContext;
 
     public context!: React.ContextType<typeof CardContext>;
     public state: AccountState;
 
-    constructor(props: {}) {
+    constructor(props: InjectedAlertProps) {
         super(props);
 
         this.state = {
@@ -35,7 +45,7 @@ export default class Account extends React.Component<{}, AccountState> {
 
     private async addCard(number: string) {
         const card = await this.context.getCard(number);
-        if(card) {
+        if (card) {
             const newState = {} as any;
             if (card.beneficiary === this.context.account && this.state.availableCards.findIndex(card => card.number === number) === -1) {
                 newState.availableCards = [...this.state.availableCards, card];
@@ -51,16 +61,16 @@ export default class Account extends React.Component<{}, AccountState> {
 
     private async updateCard(number: string) {
         const card = await this.context.getCard(number);
-        if(card) {
+        if (card) {
             const clonedAvailableCards = [...this.state.availableCards];
             const availableIndex = clonedAvailableCards.findIndex(c => c.number === number);
-            if(availableIndex) {
+            if (availableIndex) {
                 clonedAvailableCards[availableIndex] = card;
             }
-            
+
             const clonedEmittedCards = [...this.state.emittedCards];
             const emittedIndex = clonedEmittedCards.findIndex(c => c.number === number);
-            if(emittedIndex) {
+            if (emittedIndex) {
                 clonedEmittedCards[emittedIndex] = card;
             }
 
@@ -73,7 +83,7 @@ export default class Account extends React.Component<{}, AccountState> {
 
     async componentDidUpdate() {
         //fetch the data once the context says it has loaded
-        if(!this.context.loading) {
+        if (!this.context.loading) {
             this.setState({
                 loaded: true,
                 availableCards: await this.context.getAvailableCards(),
@@ -92,6 +102,18 @@ export default class Account extends React.Component<{}, AccountState> {
         this.context.removeListener(CardEvent.Created, this.state.addCard);
     }
 
+    async redeemCard(card: Card) {
+        await this.context.redeemCard(card.number);
+        this.props.alert.show(<>Card redeemed successfully, your funds will be transferred
+            to <Address title={card.beneficiary}>0x{card.beneficiary}</Address> shortly</>);
+    }
+
+    async cancelCard(card: Card) {
+        await this.context.cancelCard(card.number);
+        this.props.alert.show(<>Card redeemed successfully, your funds will be transferred
+            to <Address title={card.creator}>0x{card.creator}</Address> shortly</>);
+    }
+
     render() {
         const available = this.state.availableCards.filter(card => card.redeemedAt.eq(0) && card.cancelledAt.eq(0));
         const emitted = this.state.emittedCards.filter(card => card.redeemedAt.eq(0) && card.cancelledAt.eq(0));
@@ -107,7 +129,7 @@ export default class Account extends React.Component<{}, AccountState> {
                           explanation="You will find the cards that have been gifted to you below. Click on the card to redeem the amount."
                           action="Redeem card"
                           button="success"
-                          onClick={card => this.context.redeemCard(card.number)}/>
+                          onClick={this.redeemCard.bind(this)}/>
 
                 <CardList cards={emitted}
                           title={`${emitted.length || `No`} card${emitted.length !== 1 ? `s` : ``} created by you`}
@@ -115,8 +137,10 @@ export default class Account extends React.Component<{}, AccountState> {
                         Click on the card to cancel the emission."
                           action="Cancel card"
                           button="danger"
-                          onClick={card => this.context.cancelCard(card.number)}/>
+                          onClick={this.cancelCard.bind(this)}/>
             </Container>
         </>;
     }
 }
+
+export default withAlert()(Account);

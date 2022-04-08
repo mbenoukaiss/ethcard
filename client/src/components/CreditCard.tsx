@@ -111,7 +111,7 @@ const CreditCard = (props: CreditCardProps) => {
         }
 
         setHovering(true);
-    }, []);
+    }, [props.animation]);
 
     const resetStyles = useCallback(function(this: any, e) {
         setTransform(`perspective(${e.currentTarget.clientWidth}px) rotateX(0deg) rotateY(0deg)`);

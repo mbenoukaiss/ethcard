@@ -15,6 +15,7 @@ export type FormController = {
     childChange: (name: string, value: any) => void;
     errors: Errors;
     submit: (data: any) => void;
+    clearErrors: () => void;
     addError: (error: string) => void;
 }
 
@@ -79,6 +80,9 @@ export function useForm(config: FormInitializer | ((data: any) => void)): FormCo
                     config(data);
                 }
             }
+        },
+        clearErrors: () => {
+            setErrors({});
         },
         addError: (error: string) => {
             if (errors.__general__ === undefined) {

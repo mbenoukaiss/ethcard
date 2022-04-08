@@ -7,8 +7,10 @@ import {Card} from "../../contracts/CardContext";
 import {ethers} from "ethers";
 import {ERROR_MESSAGES} from "../../providers/CardProvider";
 import FormErrors from "../common/FormErrors";
+import {useAlert} from "react-alert";
 
 export default function GiftCardForm(props: {liveUpdate: (card: Card) => void}) {
+    const alert = useAlert();
     const verifyAddress = useValidator<string>(`beneficiary`, (address: string) => {
         if(!ethers.utils.isAddress(address)) {
             return [`beneficiary`, `Invalid ethereum address`];
@@ -20,8 +22,10 @@ export default function GiftCardForm(props: {liveUpdate: (card: Card) => void}) 
         validators: [verifyAddress],
         submit: async data => {
             try {
+                alert.show(<>Your card is being created and will show up shortly in the <u>Account</u> tab</>);
                 await createCard(data);
             } catch (e: any) {
+                form.clearErrors();
                 form.addError(ERROR_MESSAGES[e.code]);
             }
         },
