@@ -1,5 +1,6 @@
 # Ethcard
 A (mostly useless) web application to make gift cards of Ethereum with your Metamask wallet !
+Project made in two weeks to learn the basics of Solidity and Web3 programming.
 
 # Installation
 If you plan on deploying both the smart contract and the client you can run the following 
