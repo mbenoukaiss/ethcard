@@ -29,15 +29,14 @@ describe(`Cards`, function () {
 
     it(`Create simple card`, async function () {
         const number = `0xa0683df20755cba5be85323b3ff0d054c0aef90e97abfda4c50da23b65a299e2`;
-        const createCardTx = await cards.connect(addr1).createCard(
+        const tx = await cards.connect(addr1).createCard(
             number,
             addr2.address,
             `Hello !`,
             {value: parseEther(0.5)}
         );
 
-        // wait until the transaction is mined
-        await createCardTx.wait();
+        await tx.wait();
 
         //check the contract received the right amount of ether
         const balance = await cards.provider.getBalance(cards.address);
@@ -51,6 +50,22 @@ describe(`Cards`, function () {
         expect(card.message).to.equal(`Hello !`);
         expect(card.redeemedAt).to.equal(BigNumber.from(0));
         expect(card.cancelledAt).to.equal(BigNumber.from(0));
+    });
+
+    it(`Create card for yourself`, async function () {
+        const number = `0xd7de1281ee76226ddfa2efac59a8db26410b5cde3a040d7b18cceb9ef71e410a`;
+        const tx = await cards.connect(addr1).createCard(
+            number,
+            addr1.address,
+            `Hello !`,
+            {value: parseEther(5.6)}
+        );
+
+        await tx.wait();
+
+        const card = await cards.getCard(number);
+        expect(card.creator).to.equal(addr1.address);
+        expect(card.beneficiary).to.equal(addr1.address);
     });
 
     it(`Card creation should emit event`, async function () {
@@ -159,11 +174,49 @@ describe(`Cards`, function () {
         )).to.be.revertedWith(`InvalidBeneficiary("${nullAddress}")`);
     });
 
+    it(`Check emitted cards contains the new card`, async function () {
+        const number = `0xa51445df02aab9d95aef0b5334a4428582e3918da0f820f20e980784147413ec`;
+
+        expect(await cards.getEmittedCards(addr1.address)).to.eql([]);
+        expect(await cards.getEmittedCards(addr2.address)).to.eql([]);
+
+        await cards.connect(addr1).createCard(
+            number,
+            addr2.address,
+            `Hello !`,
+            {value: parseEther(9)}
+        );
+
+        expect(await cards.getEmittedCards(addr1.address)).to.eql([number]);
+
+        //check it isn't in the beneficiarys's emitted cards list
+        expect(await cards.getEmittedCards(addr2.address)).to.eql([]);
+    });
+
+    it(`Check available cards contains the new card`, async function () {
+        const number = `0xa51445df02aab9d95aef0b5334a4428582e3918da0f820f20e980784147413ec`;
+
+        expect(await cards.getAvailableCards(addr1.address)).to.eql([]);
+        expect(await cards.getAvailableCards(addr2.address)).to.eql([]);
+
+        await cards.connect(addr1).createCard(
+            number,
+            addr2.address,
+            `Hello !`,
+            {value: parseEther(9)}
+        );
+
+        expect(await cards.getAvailableCards(addr2.address)).to.eql([number]);
+
+        //check it isn't in the owner's available cards list
+        expect(await cards.getAvailableCards(addr1.address)).to.eql([]);
+    });
+
     it(`Card redemption`, async function () {
-        const card = `0x9b931349e1ad2bec511969cd2d51ba491bb4af0f05870f5c15bfa600d54c293a`;
+        const number = `0x9b931349e1ad2bec511969cd2d51ba491bb4af0f05870f5c15bfa600d54c293a`;
 
         await cards.connect(addr4).createCard(
-            card,
+            number,
             addr5.address,
             `Redeem me`,
             {value: parseEther(2.99)}
@@ -173,13 +226,41 @@ describe(`Cards`, function () {
         const balance = await cards.provider.getBalance(cards.address);
         expect(balance).to.equal(parseEther(2.99));
 
-        await cards.connect(addr5).redeemCard(card)
+        const tx = await cards.connect(addr5).redeemCard(number);
+        const block = await cards.provider.getBlock(tx.blockHash);
 
         //check the amount has been sent back to the owner
         const newBalance = await cards.provider.getBalance(cards.address);
         expect(newBalance).to.equal(parseEther(0));
 
+        //check redeemed at was set
+        const card = await cards.getCard(number);
+        expect(card.redeemedAt).to.equal(block.timestamp);
+        expect(card.cancelledAt).to.equal(0);
+
         //TODO: check the right user received the ether
+    });
+
+    it(`Card redemption should emit event`, async function () {
+        const number = `0xd629196171c365965e3c6b41389f9056725b61ec7c8e5635dc210412fa426b44`;
+
+        await cards.connect(addr1).createCard(
+            number,
+            addr2.address,
+            `Cancel event`,
+            {value: parseEther(45.1)}
+        );
+
+        await expect(cards.connect(addr2).redeemCard(number))
+            .to.emit(cards, `RedeemedCard`).withArgs(number);
+    });
+
+    it(`Inexistant card redemption fails`, async function () {
+        await expect(cards.connect(addr1).redeemCard(`0x1eb47bef4b636c99e5093bb2216858942cfc3bd6fab86ddda2c567f195fa534a`))
+            .to.be.revertedWith(`DoesNotExist`);
+
+        await expect(cards.connect(addr2).redeemCard(`0x304732793f0a48a6cbd359dd62bf6cdc6011bce6fe831df9a6f770d2c4412c46`))
+            .to.be.revertedWith(`DoesNotExist`);
     });
 
     it(`Card redemption without being the beneficiary`, async function () {
@@ -223,10 +304,10 @@ describe(`Cards`, function () {
     });
 
     it(`Card cancellation`, async function () {
-        const card = `0xdbc170bf10cd669f3bedf97bd42eb313996d26a27c20b154aecf5cdaca8360ba`;
+        const number = `0xdbc170bf10cd669f3bedf97bd42eb313996d26a27c20b154aecf5cdaca8360ba`;
 
         await cards.connect(addr4).createCard(
-            card,
+            number,
             addr5.address,
             `Cancel me`,
             {value: parseEther(1.23)}
@@ -236,32 +317,60 @@ describe(`Cards`, function () {
         const balance = await cards.provider.getBalance(cards.address);
         expect(balance).to.equal(parseEther(1.23));
 
-        await cards.connect(addr4).cancelCard(card)
+        const tx = await cards.connect(addr4).cancelCard(number);
+        const block = await cards.provider.getBlock(tx.blockHash);
 
         //check the amount has been sent back to the owner
         const newBalance = await cards.provider.getBalance(cards.address);
         expect(newBalance).to.equal(parseEther(0));
 
+        //check cancelled at was set
+        const card = await cards.getCard(number);
+        expect(card.cancelledAt).to.equal(block.timestamp);
+        expect(card.redeemedAt).to.equal(0);
+
         //TODO: check the right user received the ether
     });
 
-    it(`Card cancellation without being the creator`, async function () {
-        const card = `0x98f5800e28c6e368bf131c88cc79dd4d8ddf4afc7eef46b100b42939f3632266`;
+    it(`Card cancellation should emit event`, async function () {
+        const number = `0x29385a0165fa227362d2296cae4ce355601b678aef6b378a1a27fde02138f2e3`;
 
         await cards.connect(addr1).createCard(
-            card,
+            number,
+            addr2.address,
+            `Cancel event`,
+            {value: parseEther(1.45)}
+        );
+
+        await expect(cards.connect(addr1).cancelCard(number))
+            .to.emit(cards, `CancelledCard`).withArgs(number);
+    });
+
+    it(`Inexistant card cancellation fails`, async function () {
+        await expect(cards.connect(addr1).redeemCard(`0xe4d3baa605ea5a32bae20edb824e2d2d8f0d037b74c2cac251d5294469e86858`))
+            .to.be.revertedWith(`DoesNotExist()`);
+
+        await expect(cards.connect(addr2).redeemCard(`0x1e0493617659d1628fabfc95c6f0468ddec7dd4b4edc36ac198b3766115734a2`))
+            .to.be.revertedWith(`DoesNotExist()`);
+    });
+
+    it(`Card cancellation without being the creator`, async function () {
+        const number = `0x98f5800e28c6e368bf131c88cc79dd4d8ddf4afc7eef46b100b42939f3632266`;
+
+        await cards.connect(addr1).createCard(
+            number,
             addr2.address,
             `Hello !`,
             {value: parseEther(3.788)}
         );
 
         //beneficiary
-        await expect(cards.connect(addr2).cancelCard(card)).to.be.revertedWith(`NotTheCreator("${addr1.address}")`);
+        await expect(cards.connect(addr2).cancelCard(number)).to.be.revertedWith(`NotTheCreator("${addr1.address}")`);
 
         //random addresses
-        await expect(cards.connect(addr3).cancelCard(card)).to.be.revertedWith(`NotTheCreator("${addr1.address}")`);
-        await expect(cards.connect(addr4).cancelCard(card)).to.be.revertedWith(`NotTheCreator("${addr1.address}")`);
-        await expect(cards.connect(addr5).cancelCard(card)).to.be.revertedWith(`NotTheCreator("${addr1.address}")`);
+        await expect(cards.connect(addr3).cancelCard(number)).to.be.revertedWith(`NotTheCreator("${addr1.address}")`);
+        await expect(cards.connect(addr4).cancelCard(number)).to.be.revertedWith(`NotTheCreator("${addr1.address}")`);
+        await expect(cards.connect(addr5).cancelCard(number)).to.be.revertedWith(`NotTheCreator("${addr1.address}")`);
     });
 
     it(`Cancelling a same card twice`, async function () {

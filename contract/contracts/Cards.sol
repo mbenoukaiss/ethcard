@@ -5,6 +5,7 @@ contract Cards {
 
     error Redeemed();
     error Cancelled();
+    error DoesNotExist();
     error NotTheBeneficiary(address beneficiary);
     error NotTheCreator(address creator);
     error InvalidBeneficiary(address beneficiary);
@@ -64,18 +65,18 @@ contract Cards {
             revert InvalidBeneficiary(beneficiary);
         }
 
-        if(msg.value < 0.0001 ether) {
+        if (msg.value < 0.0001 ether) {
             revert InvalidAmount(msg.value);
         }
 
         GiftCard memory card = GiftCard({
-            number: number,
-            creator: payable(msg.sender),
-            beneficiary: payable(beneficiary),
-            amount: msg.value,
-            message: message,
-            redeemedAt: 0,
-            cancelledAt: 0
+            number : number,
+            creator : payable(msg.sender),
+            beneficiary : payable(beneficiary),
+            amount : msg.value,
+            message : message,
+            redeemedAt : 0,
+            cancelledAt : 0
         });
 
         cardsCount++;
@@ -89,6 +90,10 @@ contract Cards {
     function redeemCard(bytes32 number) external payable onlyUsable(number) {
         GiftCard storage card = cards[number];
         card.redeemedAt = block.timestamp;
+
+        if (card.number == 0) {
+            revert DoesNotExist();
+        }
 
         if (card.beneficiary != msg.sender) {
             revert NotTheBeneficiary(card.beneficiary);
@@ -105,6 +110,10 @@ contract Cards {
     function cancelCard(bytes32 number) external payable onlyUsable(number) {
         GiftCard storage card = cards[number];
         card.cancelledAt = block.timestamp;
+
+        if (card.number == 0) {
+            revert DoesNotExist();
+        }
 
         if (card.creator != msg.sender) {
             revert NotTheCreator(card.creator);
