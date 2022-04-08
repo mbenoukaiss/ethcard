@@ -8954,11 +8954,6 @@ utils-merge@1.0.1:
   resolved "https://registry.yarnpkg.com/utils-merge/-/utils-merge-1.0.1.tgz#9f95710f50a267947b2ccc124741c1028427e713"
   integrity sha1-n5VxD1CiZ5R7LMwSR0HBAoQn5xM=
 
-uuid-generator-ts@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/uuid-generator-ts/-/uuid-generator-ts-1.1.0.tgz#a489477812c163bea3bdacbfca1a2727ca83d407"
-  integrity sha512-Kv4pgpuAoVjb0bpSE6tzXDrjTiJMqNx12NabOXHM5YpU8NWH8SJQ+o1ljLgsgRVX2K7vzxsXUu/9Ck4h/279XQ==
-
 uuid@^8.3.2:
   version "8.3.2"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"

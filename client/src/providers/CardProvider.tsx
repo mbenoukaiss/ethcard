@@ -1,6 +1,5 @@
 import React from 'react';
 import {ethers} from 'ethers';
-import {UUID} from 'uuid-generator-ts';
 import {Card, CONTRACT_ABI, CONTRACT_ADDRESS} from "../contracts/CardContext";
 import {CardContext} from "../contracts/CardContext";
 import {Contract} from "ethers";
@@ -62,17 +61,8 @@ export class CardProvider extends React.Component<{}, CardProviderState> {
         return (sendProvider ? [this.state.provider, this.state.contract] : this.state.contract) as unknown as T;
     }
 
-    private static toBytes(input: string): Array<number> {
-        if (!input) {
-            return [];
-        }
-
-        const bytes = [];
-        for (let i = 0; i < input.length; i++) {
-            bytes.push(input.charCodeAt(i));
-        }
-
-        return bytes;
+    private static generateCardNumber() {
+        return `0x` + [...Array(64)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
     }
 
     public async componentDidMount() {
@@ -165,9 +155,9 @@ export class CardProvider extends React.Component<{}, CardProviderState> {
     private async createCard(data: { beneficiary: string, amount: number, message: string }): Promise<string | null> {
         if (this.checkEthereum()) {
             const contract = this.getContract();
-            const uuid = UUID.getDashFreeUUID(new UUID());
+            const number = CardProvider.generateCardNumber();
 
-            const tx = await contract.createCard(CardProvider.toBytes(uuid), data.beneficiary, data.message ?? ``, {
+            const tx = await contract.createCard(number, data.beneficiary, data.message ?? ``, {
                 from: this.state.account,
                 value: ethers.utils.parseEther(data.amount.toString()),
                 gasLimit: ethers.utils.hexlify(500000),
@@ -176,7 +166,7 @@ export class CardProvider extends React.Component<{}, CardProviderState> {
             tx.wait();
             console.log(tx);
 
-            return uuid;
+            return number;
         }
 
         return null;

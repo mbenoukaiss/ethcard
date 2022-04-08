@@ -1,14 +1,15 @@
 import React from 'react';
 import {FaEthereum, FaReact, FaFileContract} from 'react-icons/fa';
 import {SiSolidity} from 'react-icons/si';
-import {MdWeb} from 'react-icons/md';
+import {GiFox} from 'react-icons/gi';
+import {MdWeb, MdOutlineLoop} from 'react-icons/md';
 import styled from 'styled-components';
 
 const Container = styled.div`
+    display: flex;
+    flex-wrap: wrap;
     min-width: 200px;
-    margin-left: 5px;
     padding: 3px 16px;
-    border-left: 3px solid rgba(255, 255, 255, 0.25);
 `;
 
 const Item = styled.span`
@@ -19,10 +20,10 @@ const Item = styled.span`
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
-    padding: 8px 18px;
-    margin: 5px 0;
+    padding: 12px 24px;
     width: fit-content;
     border-radius: 2px;
+    margin: 5px;
 
     & :first-child {
         margin-right: 10px;
@@ -38,6 +39,8 @@ const Stack = () => {
             <Item><FaReact/> React</Item>
             <Item><MdWeb/> Web 3.0</Item>
             <Item><SiSolidity/> Solidity</Item>
+            <Item><GiFox/> MetaMask</Item>
+            <Item><MdOutlineLoop/> Continuous integration</Item>
         </Container>
     </div>
 }

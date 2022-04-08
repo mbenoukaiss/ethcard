@@ -6,6 +6,7 @@ import Stack from "../components/home/Stack";
 import GiftCardForm from "../components/home/GiftCardForm";
 import CreditCard from "../components/CreditCard";
 import GiftIllustration from "../assets/gift.svg";
+import ProgrammingIllustration from "../assets/programming.svg";
 import {Card} from "../contracts/CardContext";
 import {BsArrowRightCircleFill} from "react-icons/bs";
 
@@ -45,7 +46,12 @@ export default function Home() {
                 </Hint>
             </div>
         </Flex>
+
         <Separation/>
-        <Stack/>
+
+        <Flex row="space-between">
+            <Stack/>
+            <img src={ProgrammingIllustration} width={350} className="mx-7" alt="Programming"/>
+        </Flex>
     </Container>;
 }
