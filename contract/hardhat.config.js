@@ -2,10 +2,16 @@ const fs = require('fs');
 
 require("@nomiclabs/hardhat-waffle");
 
-//current contract 0xA9D8EF3B012c5e2860D364aB6DCd049735D550E4
-
 try {
-    const config = JSON.parse(fs.readFileSync(`config.json`, `utf8`));
+    let config;
+    if (fs.existsSync(`config.json`)) {
+        config = JSON.parse(fs.readFileSync(`config.json`, `utf8`));
+    } else {
+        config = {
+            api: process.env.CONTRACT_API,
+            keys: [process.env.ETHEREUM_PRIVATE_KEY],
+        }
+    }
 
     module.exports = {
         solidity: `0.8.13`,

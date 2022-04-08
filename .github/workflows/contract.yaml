@@ -1,0 +1,27 @@
+name: Contract tests
+on: [pull_request, push]
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v3.1.0
+        with:
+          node-version: 16
+      - name: Cache ~/.cache
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache
+          key: ${{ runner.os }}-cache-${{ hashFiles('./yarn.lock') }}
+      - name: Install
+        working-directory: ./contract
+        run: yarn install --frozen-lockfile
+        shell: bash
+      - working-directory: ./contract
+        run: yarn test
+        env:
+          CONTRACT_API: ${{ secrets.CONTRACT_API }}
+          ETHEREUM_PRIVATE_KEY: ${{ secrets.ETHEREUM_PRIVATE_KEY }}
