@@ -1,6 +1,7 @@
 import React from 'react';
 import ABI from "./Cards.json";
 import {BigNumber} from "ethers";
+import {Contract, providers} from "ethers";
 
 export const CONTRACT_ADDRESS: string = `0x048a8198d33Bcd0D368d1fD3019d15B1Fed4ea90`;
 export const CONTRACT_ABI: any = ABI.abi;
@@ -18,6 +19,8 @@ export type Card = {
 export type CardContextProps = {
     loading: boolean;
     account?: string | null;
+    getProvider: () => providers.Web3Provider;
+    getContract: () => Contract;
     promptConnexion: () => void;
     getCardsCount: () => Promise<number>;
     getCard: (number: string) => Promise<Card|undefined>;
@@ -33,6 +36,8 @@ export type CardContextProps = {
 export const CardContext = React.createContext<CardContextProps>({
     loading: true,
     account: undefined,
+    getProvider: () => undefined as unknown as providers.Web3Provider,
+    getContract: () => undefined as unknown as Contract,
     promptConnexion: () => null,
     getCardsCount: () => Promise.resolve(0),
     getCard: () => Promise.resolve(undefined),

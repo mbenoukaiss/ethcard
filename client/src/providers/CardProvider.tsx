@@ -2,7 +2,7 @@ import React from 'react';
 import {ethers} from 'ethers';
 import {Card, CONTRACT_ABI, CONTRACT_ADDRESS} from "../contracts/CardContext";
 import {CardContext} from "../contracts/CardContext";
-import {Contract} from "ethers";
+import {Contract, providers} from "ethers";
 
 const {ethereum} = window as any;
 
@@ -57,8 +57,12 @@ export class CardProvider extends React.Component<{}, CardProviderState> {
         return ethereum && (requiredLogin ? Boolean(this.state.account) : true);
     }
 
-    public getContract<T = Contract>(sendProvider: boolean = false): T {
-        return (sendProvider ? [this.state.provider, this.state.contract] : this.state.contract) as unknown as T;
+    public getProvider(): providers.Web3Provider {
+        return this.state.provider;
+    }
+
+    public getContract(): Contract {
+        return this.state.contract;
     }
 
     private static generateCardNumber() {
@@ -71,6 +75,11 @@ export class CardProvider extends React.Component<{}, CardProviderState> {
 
     private async initializeWallet(registerEvents: boolean = true) {
         if (this.checkEthereum()) {
+            ethereum.request({
+                method: "wallet_switchEthereumChain",
+                params: [{chainId: "0x3"}]
+            });
+
             const accounts = await ethereum.request({method: `eth_accounts`});
             if (accounts.length) {
                 this.setState({
@@ -209,7 +218,8 @@ export class CardProvider extends React.Component<{}, CardProviderState> {
             for (const event of events) {
                 //register the listener on the contract if it's the first listener we add
                 if (!this.state.listeners[event]) {
-                    const [provider, contract] = this.getContract<[any, Contract]>(true);
+                    const provider = this.getProvider();
+                    const contract = this.getContract();
 
                     //is the provider.once really useful ?
                     provider.once("block", () => {
@@ -255,6 +265,8 @@ export class CardProvider extends React.Component<{}, CardProviderState> {
         const value = {
             loading: this.state.loading,
             account: this.state.account,
+            getProvider: this.getProvider.bind(this),
+            getContract: this.getContract.bind(this),
             promptConnexion: this.promptConnexion.bind(this),
             getCardsCount: this.getCardsCount.bind(this),
             getCard: this.getCard.bind(this),

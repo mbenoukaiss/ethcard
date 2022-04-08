@@ -22,11 +22,16 @@ export default function GiftCardForm(props: {liveUpdate: (card: Card) => void}) 
         validators: [verifyAddress],
         submit: async data => {
             try {
-                alert.show(<>Your card is being created and will show up shortly in the <u>Account</u> tab</>);
                 await createCard(data);
+                alert.show(<>Your card is being created and will show up shortly in the <u>Account</u> tab</>);
             } catch (e: any) {
                 form.clearErrors();
-                form.addError(ERROR_MESSAGES[e.code]);
+
+                if(ERROR_MESSAGES[e.code]) {
+                    form.addError(ERROR_MESSAGES[e.code]);
+                } else {
+                    console.error(e);
+                }
             }
         },
         live: data => props.liveUpdate(data),

@@ -1,9 +1,11 @@
-import React from 'react';
+import React, {useEffect, useContext} from 'react';
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import styled from 'styled-components';
 import Navbar from './Navbar';
 import Home from "../pages/Home";
 import Account from "../pages/Account";
+import {CardContext, CONTRACT_ADDRESS} from "../contracts/CardContext";
+import {useAlert} from "react-alert";
 
 export const ROUTE_HOME = `/`;
 export const ROUTE_ACCOUNT = `/account`;
@@ -27,6 +29,22 @@ const Blur = styled.div`
 `;
 
 const App = () => {
+    const {getProvider} = useContext(CardContext);
+    const alert = useAlert();
+
+    useEffect(() => {
+        getProvider().getCode(CONTRACT_ADDRESS).then(code => {
+            if (code === '0x') {
+                alert.show(<>Contract not deployed on this network, please switch to
+                    the <b>Ropsten network</b> and <a href="/">refresh the page</a></>, {
+                    type: `error`,
+                    timeout: 0,
+                });
+            }
+        });
+    }, []);
+
+
     return (
         <Router>
             <Background>
