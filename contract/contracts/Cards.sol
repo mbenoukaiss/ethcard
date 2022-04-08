@@ -8,6 +8,7 @@ contract Cards {
     error NotTheBeneficiary(address beneficiary);
     error NotTheCreator(address creator);
     error InvalidBeneficiary(address beneficiary);
+    error InvalidAmount(uint256 amount);
     error TransferFailed();
 
     struct GiftCard {
@@ -21,7 +22,7 @@ contract Cards {
         uint256 cancelledAt;
     }
 
-    event CreateCard(bytes32 card);
+    event CreatedCard(bytes32 card);
     event RedeemedCard(bytes32 card);
     event CancelledCard(bytes32 card);
 
@@ -63,6 +64,10 @@ contract Cards {
             revert InvalidBeneficiary(beneficiary);
         }
 
+        if(msg.value < 0.0001 ether) {
+            revert InvalidAmount(msg.value);
+        }
+
         GiftCard memory card = GiftCard({
             number: number,
             creator: payable(msg.sender),
@@ -78,7 +83,7 @@ contract Cards {
         emittedCards[msg.sender].push(number);
         availableCards[beneficiary].push(number);
 
-        emit CreateCard(number);
+        emit CreatedCard(number);
     }
 
     function redeemCard(bytes32 number) external payable onlyUsable(number) {

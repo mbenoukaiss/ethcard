@@ -2,7 +2,7 @@ import React from 'react';
 import ABI from "./Cards.json";
 import {BigNumber} from "ethers";
 
-export const CONTRACT_ADDRESS: string = `0x7dF1b3f190b495E88a0E58cb654F6e1D4a3a4893`;
+export const CONTRACT_ADDRESS: string = `0x048a8198d33Bcd0D368d1fD3019d15B1Fed4ea90`;
 export const CONTRACT_ABI: any = ABI.abi;
 
 export type Card = {
