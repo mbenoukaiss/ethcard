@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "license": "MIT",
     "scripts": {
-        "setup": "cd contract && yarn install & cd ../client && yarn install",
+        "setup": "cd contract && yarn install && cd ../client && yarn install",
         "setup-client": "cd client && yarn install",
         "deploy": "cd contract && yarn deploy",
         "deploy-ropsten": "cd contract && yarn deploy-ropsten",

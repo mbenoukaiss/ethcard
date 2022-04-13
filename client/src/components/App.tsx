@@ -42,7 +42,7 @@ const App = () => {
                 });
             }
         });
-    }, []);
+    }, [getProvider, alert]);
 
 
     return (
